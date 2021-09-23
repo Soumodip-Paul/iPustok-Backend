@@ -45,4 +45,40 @@ router.post("/signup", [
     }
 })
 
+router.post("/login", [
+
+    body('email', 'Email is not valid').isEmail(),
+    body('password', 'password is too weak').exists(),
+
+], async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(404).json({ error: errors.array() })
+    }
+
+    const {email , password} = req.body
+
+    try {
+
+        let user = await User.findOne({email})
+        if(!user) {
+            return res.status(400).json({error: "Please login with valid credentials"})
+        }
+
+        const comparePassword = await bcrypt.compare(password, user.password);
+
+        if (!comparePassword) {
+            return res.status(400).json({error: "Please login with valid credentials"})
+        }
+
+        const authToken = jwt.sign({
+            id: user.id
+        }, sign)
+
+        res.status(200).json({authToken})
+
+    } catch (error) {
+        res.status(500).send("Internal Server Error"); console.log(error);
+    }
+})
 module.exports = router
