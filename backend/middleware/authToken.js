@@ -11,7 +11,6 @@ const verifyToken = (req, res, next) => {
     try {
         const data = jwt.verify(token, JWT_SECRET);
         req.id = data.id;
-        console.log(data.id)
         next();
     } catch (error) {
         res.status(401).send({ error: "Please authenticate using a valid token" })
