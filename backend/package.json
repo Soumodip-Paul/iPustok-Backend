@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "both": "concurrently  \"nodemon index.js\" \"cd ./ipoostok && npm start\" ",
+    "build": "cd ./ipoostok && npm run build"
   },
   "author": "Soumodip Paul",
   "license": "ISC",
@@ -18,6 +20,7 @@
     "mongoose": "^6.0.4"
   },
   "devDependencies": {
+    "concurrently": "^6.2.1",
     "nodemon": "^2.0.12"
   }
 }
