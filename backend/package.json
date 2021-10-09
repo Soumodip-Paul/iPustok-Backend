@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
-    "both": "concurrently  \"nodemon index.js\" \"cd ../ipoostok && npm start\" ",
+    "both": "concurrently  \"nodemon index.js\" \"cd ..\\ipoostok && npm start\" ",
     "build": "cd ./ipoostok && npm run build"
   },
   "author": "Soumodip Paul",
