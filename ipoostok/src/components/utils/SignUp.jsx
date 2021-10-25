@@ -1,15 +1,49 @@
-import React from 'react'
+import { useContext, useState } from 'react'
 import { AuthContext } from '../context/Auth'
 import '../../stylesheet/modal.css'
 import Icons from '../assets/svg/Facebook.svg'
 
 
 export const SignUp = () => {
-    const { authToken } = React.useContext(AuthContext)
-    console.log(authToken)
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const { authToken, setAuthToken } = useContext(AuthContext)
+    // console.log(authToken)
     const onSubmit = e => {
         e.preventDefault()
+        fetchData(name,email, password)
+        setEmail('')
+        setPassword('')
+        setName('')
+        document.getElementById('closeSignIn').click()
     }
+
+    const fetchData = async (name, email, password) => {
+        const headers = new Headers()
+        headers.append("Content-Type", "application/json")
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/auth/signup`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ name, email, password }),
+            })
+            const data = await response.json()
+            if (response.status === 200) {
+                setAuthToken(data.authToken)
+            }
+            else {
+                alert(data.error || data)
+                setAuthToken(null)
+            }
+        } catch (error) {
+            console.log(error)
+            setAuthToken(null)
+        }
+
+    }
+
     return (
         !authToken &&
         <div className="modal rounded-5 shadow fade" id="modalSignin" tabIndex="-1" aria-labelledby="modalSigninTitle" aria-hidden="true">
@@ -17,17 +51,21 @@ export const SignUp = () => {
                 <div className="modal-content">
                     <div className="modal-header p-5 pb-4 border-bottom-0">
                         <h2 className="fw-bold mb-0" id="modalSigninTitle">Sign up for free</h2>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" id="closeSignIn" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <div className="modal-body p-5 pt-0">
                         <form className="" onSubmit={onSubmit} >
                             <div className="form-floating mb-3">
-                                <input type="email" className="form-control rounded-4" id="floatingInput" placeholder="name@example.com" />
+                                <input value={name} onChange={e => setName(e.target.value)} type="text" className="form-control rounded-4" id="Name" placeholder="Name" />
+                                <label htmlFor="Name">Name</label>
+                            </div>
+                            <div className="form-floating mb-3">
+                                <input value={email} onChange={e => setEmail(e.target.value)} type="email" className="form-control rounded-4" id="floatingInput" placeholder="name@example.com" />
                                 <label htmlFor="floatingInput">Email address</label>
                             </div>
                             <div className="form-floating mb-3">
-                                <input type="password" className="form-control rounded-4" id="floatingPassword" placeholder="Password" />
+                                <input value={password} onChange={e => setPassword(e.target.value)} type="password" className="form-control rounded-4" id="floatingPassword" placeholder="Password" />
                                 <label htmlFor="floatingPassword">Password</label>
                             </div>
                             <button className="w-100 mb-2 btn btn-lg rounded-4 btn-primary" type="submit">Sign up</button>
@@ -55,7 +93,7 @@ export const SignUp = () => {
 }
 
 export const SignInBtn = () => {
-    const { authToken } = React.useContext(AuthContext)
+    const { authToken } = useContext(AuthContext)
     return (
         !authToken ?
             <button type="button" className="btn btn-primary mx-2 my-1" data-bs-toggle="modal" data-bs-target="#modalSignin">
