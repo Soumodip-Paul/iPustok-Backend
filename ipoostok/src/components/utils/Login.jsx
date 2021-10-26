@@ -78,7 +78,7 @@ export const Login = () => {
                             <button type="button" className="btn btn-secondary" id="closeLogin" data-bs-dismiss="modal">Close</button>
                             <button type="button" className="btn btn-primary" onClick={e => {
                                 document.getElementById('closeLogin').click()
-                                LogOut(setAuthToken);
+                                setTimeout(() =>  setAuthToken(null), 300)
                             }}>Log Out</button>
                         </div>
                     </div>
@@ -90,14 +90,8 @@ export const Login = () => {
 export const LoginButton = () => {
     const { authToken } = useContext(AuthContext)
     return (
-
         <button type="button" className="btn btn-primary mx-2 my-1" data-bs-toggle="modal" data-bs-target="#modalLogin">
             {!authToken ? "Log In" : "Log Out"}
         </button>
     )
-}
-
-const LogOut = (setAuthToken) => {
-    // localStorage.removeItem(key)
-    setAuthToken(null)
 }

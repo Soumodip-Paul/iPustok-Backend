@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import { LoginButton } from './Login'
 import { SignInBtn } from './SignUp'
 
@@ -28,7 +28,7 @@ export const NavBar = ({ children }) => {
 }
 
 export const NavBarBrand = ({ children }) => {
-    return <a className="navbar-brand" href="/">{children}</a>
+    return <Link className="navbar-brand" to="/">{children}</Link>
 }
 export const NavBarLink = ({ children, to }) => {
     return (
