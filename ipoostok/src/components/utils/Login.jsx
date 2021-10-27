@@ -78,6 +78,7 @@ export const Login = () => {
                             <button type="button" className="btn btn-secondary" id="closeLogin" data-bs-dismiss="modal">Close</button>
                             <button type="button" className="btn btn-primary" onClick={e => {
                                 document.getElementById('closeLogin').click()
+                                sessionStorage.clear()
                                 setTimeout(() =>  setAuthToken(null), 300)
                             }}>Log Out</button>
                         </div>

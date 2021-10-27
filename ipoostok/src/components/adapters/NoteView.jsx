@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const NoteView = ({ note }) => {
+export const NoteView = ({ note, deleteNote }) => {
     return (
         <div className="col">
         <div className="card shadow-sm">
@@ -13,8 +13,8 @@ export const NoteView = ({ note }) => {
                 <p className="card-text">{`${note.content}`.length > 150 ? note.content.slice(0,150)+ '...' : note.content}</p>
                 <div className="d-flex justify-content-between align-items-center">
                     <div className="btn-group">
-                        <button type="button" className="btn btn-sm btn-outline-secondary">View</button>
                         <button type="button" className="btn btn-sm btn-outline-secondary">Edit</button>
+                        <button onClick={deleteNote} type="button" className="btn btn-sm btn-outline-secondary">Delete</button>
                     </div>
                     <small className="text-muted">{formatTime(note.date)}</small>
                 </div>
