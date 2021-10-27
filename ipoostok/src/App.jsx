@@ -9,6 +9,7 @@ import { Pricing } from './components/pages/Pricing';
 import { About } from './components/pages/About';
 import { Dashboard } from './components/pages/Dashboard';
 import { Profile } from './components/pages/Profile';
+import { Footer } from './components/utils/Footer';
 
 function App() {
     const { authToken } = useContext(AuthContext);
@@ -30,6 +31,7 @@ function App() {
             </Router>
             <SignUp />
             <Login />
+            <Footer/>
         </>
     );
 }
