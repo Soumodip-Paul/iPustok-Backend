@@ -99,4 +99,16 @@ router.post('/user', verifyToken, async (req, res) => {
     }
 })
 
+// ROUTE 4: isAdmin | POST: /api/auth/admin
+
+router.post('/admin', verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.id).select("isAdmin");
+        res.send(user.isAdmin);
+    } catch (error) {
+        res.status(500).send("Internal server error")
+        console.log(error)
+    }
+})
+
 module.exports = router

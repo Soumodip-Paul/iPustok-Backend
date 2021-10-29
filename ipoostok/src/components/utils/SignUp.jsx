@@ -20,6 +20,12 @@ export const SignUp = () => {
         document.getElementById('closeSignIn').click()
     }
 
+    const Login = e => {
+        document.getElementById('closeSignIn').click()
+        document.getElementById('LoginButton').click()
+
+    }
+
     const fetchData = async (name, email, password) => {
         const headers = new Headers()
         headers.append("Content-Type", "application/json")
@@ -69,9 +75,11 @@ export const SignUp = () => {
                                 <label htmlFor="floatingPassword">Password</label>
                             </div>
                             <button className="w-100 mb-2 btn btn-lg rounded-4 btn-primary" type="submit">Sign up</button>
-                            <small className="text-muted">By clicking Sign up, you agree to the terms of use.</small>
+                            <small className="text-muted">By clicking Sign up, you agree to the terms of use.</small><br />
+                            <small className="text-muted">Already have account? <span className="text-primary"
+                            style={{cursor: 'pointer'}} onClick={Login}>Login Here</span></small>
                             <hr className="my-4" />
-                            <h2 className="fs-5 fw-bold mb-3">Or use a third-party</h2>
+                            <h2 className="fs-5 fw-bold mb-3">Or use a Social Login</h2>
                             <button className="w-100 py-2 mb-2 btn btn-outline-dark rounded-4" type="submit">
                                 <svg className="bi me-1" width="16" height="16"><use xlinkHref={`${Icons}#twitter`} /></svg>
                                 Sign up with Twitter
@@ -92,12 +100,12 @@ export const SignUp = () => {
     )
 }
 
-export const SignInBtn = () => {
+export const SignInBtn = ({text, className}) => {
     const { authToken } = useContext(AuthContext)
     return (
         !authToken ?
-            <button type="button" className="btn btn-primary mx-2 my-1" data-bs-toggle="modal" data-bs-target="#modalSignin">
-                Sign Up
+            <button type="button" className={className || "btn btn-success mx-2 my-1"} data-bs-toggle="modal" data-bs-target="#modalSignin">
+                {text || "Sign Up"}
             </button>
             : null
     )

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "concurrently  \"nodemon index.js\" \"cd ..\\ipoostok && npm start\" ",
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "build": "cd ./ipoostok && npm run build"
   },
   "author": "Soumodip Paul",

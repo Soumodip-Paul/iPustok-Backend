@@ -5,20 +5,14 @@ export const AuthContext = React.createContext({ authToken: null, setAuthToken: 
 
 export const Auth = ({ children }) => {
     const [authToken, setToken] = React.useState(localStorage.getItem(keyToken))
-    const [data, setuData] = React.useState(JSON.parse(localStorage.getItem(dataToken)))
+    const [data, setData] = React.useState(JSON.parse(localStorage.getItem(dataToken)))
     const setAuthToken = value => {
         setToken(value)
         if(value) localStorage.setItem(keyToken,value)
         else {
-            localStorage.removeItem(keyToken)
-            setData(null)
+            localStorage.clear()
+            sessionStorage.clear()
         }
-    }
-
-    const setData = data => {
-        setuData(data)
-        if(data) localStorage.setItem(dataToken,JSON.stringify(data))
-        else localStorage.removeItem(dataToken)
     }
 
     return (

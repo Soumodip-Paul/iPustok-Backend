@@ -5,7 +5,7 @@ import { noteKey } from '../assets/config'
 
 export const Dashboard = () => {
 
-    const [notes, setNotes] = useState(sessionStorage.getItem(noteKey) && JSON.parse(sessionStorage.getItem(noteKey)).reverse())
+    const [notes, setNotes] = useState(JSON.parse(sessionStorage.getItem(noteKey)))
     const [errors, setErrors] = useState("No notes available...")
     const [title, setTitle] = useState("")
     const [tag, setTag] = useState("")
@@ -51,7 +51,7 @@ export const Dashboard = () => {
             })
             if (response.status === 200) {
                 const data = await response.json()
-                setAndSaveNotes(data)
+                setAndSaveNotes(data.reverse())
                 if (data.length === 0) setErrors('No notes available...')
             }
             else {
