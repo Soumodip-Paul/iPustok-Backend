@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useContext } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
+import { AuthContext } from '../context/Auth'
 import '../../stylesheet/mce.css'
 
 const init = (useDarkMode) => {
@@ -46,9 +47,9 @@ const init = (useDarkMode) => {
             }
         },
         templates: [
-            { title: 'New Table', description: 'creates a new table', content: '<div class="mceTmpl"><table width="98%%"  border="0" cellspacing="0" cellpadding="0"><tr><th scope="col"> </th><th scope="col"> </th></tr><tr><td> </td><td> </td></tr></table></div>' },
+            { title: 'New Table', description: 'creates a new table', content: '<div className="mceTmpl"><table width="98%%"  border="0" cellspacing="0" cellpadding="0"><tr><th scope="col"> </th><th scope="col"> </th></tr><tr><td> </td><td> </td></tr></table></div>' },
             { title: 'Starting my story', description: 'A cure for writers block', content: 'Once upon a time...' },
-            { title: 'New list with dates', description: 'New List with dates', content: '<div class="mceTmpl"><span class="cdate">cdate</span><br /><span class="mdate">mdate</span><h2>My List</h2><ul><li></li><li></li></ul></div>' }
+            { title: 'New list with dates', description: 'New List with dates', content: '<div className="mceTmpl"><span className="cdate">cdate</span><br /><span className="mdate">mdate</span><h2>My List</h2><ul><li></li><li></li></ul></div>' }
         ],
         template_cdate_format: '[Date Created (CDATE): %m/%d/%Y : %H:%M:%S]',
         template_mdate_format: '[Date Modified (MDATE): %m/%d/%Y : %H:%M:%S]',
@@ -64,27 +65,111 @@ const init = (useDarkMode) => {
     }
 }
 export const Admin = () => {
-    const [page, setPage] = useState(0)
+    const [page, setPage] = useState('')
+    const [pageData, setPageData] = useState(null)
+    const { authToken } = useContext(AuthContext)
     const editorRef = useRef(null);
-    const log = () => {
+    const create = async e => {
         if (editorRef.current) {
-            console.log(editorRef.current.getContent());
+            const content = editorRef.current.getContent()
+            console.log(content);
+            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/addpage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "auth-token": authToken
+                },
+                body: JSON.stringify({
+                    url: page,
+                    content: content
+                })
+            })
+            if (response.status !== 200) alert("Some error occured")
+            else alert("Page saved")
+            setPage('')
+            setPageData(null)
         }
     };
+    const update = async e => {
+        if (editorRef.current) {
+            const content = editorRef.current.getContent()
+            console.log(content);
+            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/updatepage`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "auth-token": authToken
+                },
+                body: JSON.stringify({
+                    url: page,
+                    content: content
+                })
+            })
+            if (response.status !== 200) alert("Some error occured")
+            else alert("Page saved")
+            setPage('')
+            setPageData(null)
+        }
+    };
+
+    const newPage = e => {
+        setPage('')
+        setPageData(null)
+    }
+
+    const changePage = async e => {
+        setPage(page.split(/\s+/).filter( e => e.length !== 0).join('-'))
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/${page}`)
+
+            if (response.status !== 200) return setPageData("new")
+            const data = await response.json()
+            setPageData(data)
+        } catch (error) {
+            console.log(error)
+            setPage('')
+            setPageData(null)
+        }
+    }
+    const deletePage = async e => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/deletepage/${pageData.url}`, {
+                headers: { "auth-token": authToken },
+                method: 'DELETE'
+            })
+
+            if (response.status !== 200) return alert('Page Not Deleted')
+            else alert("Page Deleted")
+            setPage('')
+            setPageData(null)
+        } catch (error) {
+            console.log(error)
+            setPage('')
+            setPageData(null)
+        }
+    }
     return (
-        <>
-            <select className="form-select mx-auto my-3" style={{width: '80vw'}} value={page} onChange={e => setPage(e.target.value)} aria-label="Default select example">
-                <option value={0}>Select a page</option>
-                <option value={1}>Privacy Page</option>
-                <option value={2}>About Page</option>
-                <option value={3}>Terms and Conditions Page</option>
-            </select>
+        <div className="container" style={{ minHeight: '80vh' }} >
+            {/* <label for="basic-url" className="form-label">Your vanity URL</label> */}
+            <div className="input-group mb-3 px-4 py-2">
+                <span className="input-group-text" id="basic-addon3">{window.location.origin + '/'}</span>
+                <input type="text" value={page} onChange={e => setPage(e.target.value)} className="form-control" id="basic-url" aria-describedby="basic-addon3" />
+                {page && page.length !== 0 && pageData && (pageData === "new" ?
+                    <button className="btn btn-outline-secondary" type="button" onClick={ page && create }>Create Page</button>
+                    :
+                    <button className="btn btn-outline-secondary" type="button" onClick={ page && update }>Update</button>)
+                }
+                {
+                    pageData && pageData !== 'new' &&
+                    <button className="btn btn-outline-secondary" type="button" onClick={deletePage}>Delete</button>
+                }
+                <button className="btn btn-outline-secondary" type="button" onClick={!pageData ? changePage : newPage} id="button-addon2">{pageData ? "Cancle" : "Get details"}</button>
+            </div>
             <Editor
                 onInit={(evt, editor) => editorRef.current = editor}
-                initialValue="<p>This is the initial content of the editor.</p>"
+                initialValue={(pageData && pageData.content) || 'New Page'}
                 init={init(window.matchMedia('(prefers-color-scheme: dark)').matches)}
             />
-            <button onClick={log}>Log editor content</button>
-        </>
+        </ div>
     )
 }

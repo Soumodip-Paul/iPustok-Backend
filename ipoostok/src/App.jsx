@@ -6,12 +6,12 @@ import { Login } from './components/utils/Login';
 import { SignUp } from './components/utils/SignUp';
 import { NavBar, NavBarLink } from './components/utils/NavBar'
 import { Pricing } from './components/pages/Pricing';
-import { About } from './components/pages/About';
 import { Dashboard } from './components/pages/Dashboard';
 import { Profile } from './components/pages/Profile';
 import { Footer } from './components/utils/Footer';
 import { authToken as token } from './components/assets/config'
 import { Admin } from './components/pages/Admin';
+import { GetPage } from './components/pages/GetPage';
 
 function App() {
     const { authToken, setAuthToken } = useContext(AuthContext);
@@ -52,9 +52,9 @@ function App() {
                 <Switch>
                     <Route exact path="/">{!authToken ? <Home /> : <Dashboard />}</Route>
                     <Route exact path='/pricing'><Pricing /></Route>
-                    <Route exact path='/about'><About /></Route>
                     {authToken && <Route exact path='/profile'><Profile /></Route>}
                     {isAdmin && <Route exact path='/admin'><Admin/></Route>}
+                    <Route exact path="/:url"><GetPage /></Route>
                 </Switch>
             </Router>
             <SignUp />

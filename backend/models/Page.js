@@ -13,4 +13,4 @@ const Pages = new Schema({
     }
 })
 
-module.exports = mongoose.model("notes", Pages)
+module.exports = mongoose.model("pages", Pages)
