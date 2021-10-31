@@ -15,7 +15,7 @@ import { GetPage } from './components/pages/GetPage';
 
 function App() {
     const { authToken, setAuthToken } = useContext(AuthContext);
-    const [isAdmin, setIsAdmin] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(null)
     useEffect(() => {
         window.addEventListener('storage', e => {
             setAuthToken(localStorage.getItem(token))
@@ -32,11 +32,12 @@ function App() {
                 setIsAdmin(data)
             } catch (error) {
                 console.log(error)
-                setIsAdmin(false)
+                setIsAdmin(null)
             }
         }
 
         if (authToken) checkIfAdmin(authToken)
+        if (!authToken) setIsAdmin(null)
 
     }, [setAuthToken, authToken])
     return (

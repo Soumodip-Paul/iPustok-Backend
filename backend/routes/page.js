@@ -28,7 +28,7 @@ router.post('/addpage', verifyToken,
         try {
             const user = await User.findById(req.id)
             if (!user.isAdmin) return res.status(401).send("Not Allowed")
-            const { url, content } = req.body;
+            let { url, content } = req.body;
             const errors = validationResult(req);
             if (!errors.isEmpty()) return res.status(400).json(errors.array())
             url = url.split(/\s+/).filter( e => e.length !== 0 ).join('-')

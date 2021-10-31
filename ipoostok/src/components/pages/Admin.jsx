@@ -77,7 +77,7 @@ export const Admin = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    "auth-token": authToken
+                    'auth-token': authToken
                 },
                 body: JSON.stringify({
                     url: page,
@@ -98,7 +98,7 @@ export const Admin = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    "auth-token": authToken
+                    'auth-token': authToken
                 },
                 body: JSON.stringify({
                     url: page,
@@ -118,7 +118,7 @@ export const Admin = () => {
     }
 
     const changePage = async e => {
-        setPage(page.split(/\s+/).filter( e => e.length !== 0).join('-'))
+        setPage(page.split(/\s+/).filter(e => e.length !== 0).join('-'))
         try {
             const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/${page}`)
 
@@ -155,9 +155,9 @@ export const Admin = () => {
                 <span className="input-group-text" id="basic-addon3">{window.location.origin + '/'}</span>
                 <input type="text" value={page} onChange={e => setPage(e.target.value)} className="form-control" id="basic-url" aria-describedby="basic-addon3" />
                 {page && page.length !== 0 && pageData && (pageData === "new" ?
-                    <button className="btn btn-outline-secondary" type="button" onClick={ page && create }>Create Page</button>
+                    <button className="btn btn-outline-secondary" type="button" onClick={page && create}>Create Page</button>
                     :
-                    <button className="btn btn-outline-secondary" type="button" onClick={ page && update }>Update</button>)
+                    <button className="btn btn-outline-secondary" type="button" onClick={page && update}>Update</button>)
                 }
                 {
                     pageData && pageData !== 'new' &&
