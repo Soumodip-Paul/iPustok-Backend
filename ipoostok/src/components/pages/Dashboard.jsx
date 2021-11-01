@@ -2,6 +2,8 @@ import { useState, useEffect, useContext } from 'react'
 import { NoteView } from '../adapters/NoteView'
 import { AuthContext } from '../context/Auth'
 import { noteKey } from '../assets/config'
+import { fetchNotes, deleteNote, addNote } from '../adapters/network'
+import { EditNote } from '../utils/EditNote'
 
 export const Dashboard = () => {
 
@@ -10,79 +12,26 @@ export const Dashboard = () => {
     const [title, setTitle] = useState("")
     const [tag, setTag] = useState("")
     const [desc, setDesc] = useState("")
+    const [loading, isLoading] = useState(false)
+    const [note, setUpNote] = useState({ _id: '', title: '', tag: '', content: '' })
     const { authToken } = useContext(AuthContext)
 
     const setAndSaveNotes = (data) => {
         setNotes(data)
-        if(data) sessionStorage.setItem(noteKey, JSON.stringify(data))
+        if (data) sessionStorage.setItem(noteKey, JSON.stringify(data))
         else sessionStorage.removeItem(noteKey)
     }
 
-    const addNote = async (title, content, tag) => {
-        const response = await fetch(`${process.env.REACT_APP_API_KEY || 'http://localhost:8000'}/api/notes/addnote`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'auth-token' : authToken
-            },
-            body: JSON.stringify({title,content,tag})
-        })
-        if (response.status === 200 ){
-        const data = await response.json()
-        if (notes) {
-            notes.unshift(data)
-            setAndSaveNotes(notes)
-        }
-        else setAndSaveNotes([data])
-        }
-
-        setDesc('')
-        setTag('')
-        setTitle('')
-    }
-
     useEffect(() => {
-        const fetchNotes = async (authToken) => {
-            const response = await fetch(`${process.env.REACT_APP_API_KEY || 'http://localhost:8000'}/api/notes/getallnotes`, {
-                method: 'POST',
-                headers: {
-                    'auth-token': authToken
-                }
-            })
-            if (response.status === 200) {
-                const data = await response.json()
-                setAndSaveNotes(data.reverse())
-                if (data.length === 0) setErrors('No notes available...')
-            }
-            else {
-                setAndSaveNotes(null)
-                setErrors("Some error occured")
-            }
+        if (!notes) {
+            isLoading(true)
+            fetchNotes(authToken, setErrors, setAndSaveNotes).then(() => isLoading(false)).catch(err => isLoading(false))
         }
-        if(!notes) fetchNotes(authToken)
     }, [setNotes, notes, authToken])
-
-    const deleteNote = async (id) => {
-        const response = await fetch(`${process.env.REACT_APP_API_KEY || 'http://localhost:8000'}/api/notes/deletenote/${id}`,{
-            method: 'DELETE',
-            headers: {
-                'auth-token' : authToken
-            }
-        })
-        const data = await response.json()
-        if (data.success) {
-            const newNotes = notes.filter(e => e._id !== id)
-            setAndSaveNotes(newNotes)
-        }
-        else {
-            alert(data)
-        }
-    }
-
 
     const onSubmit = e => {
         e.preventDefault()
-        addNote(title,desc,tag)
+        addNote(title, desc, tag, authToken, notes, setDesc, setTitle, setTag, setAndSaveNotes)
     }
     return (
         <main>
@@ -102,7 +51,7 @@ export const Dashboard = () => {
                             <textarea value={desc} onChange={e => setDesc(e.target.value)} className="form-control" placeholder="Add your noteDescription" id="noteDescription"></textarea>
                             <label htmlFor="noteDescription">Description</label>
                         </div>
-                        <button disabled={title.length === 0 || desc.length === 0 } type="submit" className="btn btn-primary px-4 rounded-pill mb-3">Add Note</button>
+                        <button disabled={title.length === 0 || desc.length === 0} type="submit" className="btn btn-primary px-4 rounded-pill mb-3">Add Note</button>
                     </form>
                     <div className="col-lg-6 col-md-8 mx-auto">
                         <h1 className="fw-light">Album example</h1>
@@ -111,17 +60,26 @@ export const Dashboard = () => {
                     </div>
                 </div>
             </section>
-            {notes && notes.length > 0 ?
-                <div className="album py-5 bg-light">
-                    <div className="container">
-                        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                            {notes.map(note => <NoteView key={note._id} note={note} deleteNote={e => deleteNote(note._id)} />)}
+            {!loading ? notes && notes.length > 0 ?
+                <>
+                    <EditNote note={note} notes={notes} setNotes={setAndSaveNotes} />
+                    <div className="album pt-0 pb-5 bg-light">
+                        <h4 className="text-center fw-bold py-4 sticky-top" style={{ background: '#f8f9fa' }}>Your Notes</h4>
+                        <div className="container pt-2">
+                            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                                {notes.map(note => <NoteView key={note._id} note={note} deleteNote={e => deleteNote(note._id, authToken, notes, setAndSaveNotes)} editNote={e => setUpNote(note)} />)}
+                            </div>
                         </div>
-
                     </div>
-                </div>
+                </>
                 :
                 <h3 className="text-center fst-italic p-3">{errors}</h3>
+                :
+                <div className="text-center w-100">
+                    <div className="spinner-border text-secondary text-center" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>
             }
         </main>
     )

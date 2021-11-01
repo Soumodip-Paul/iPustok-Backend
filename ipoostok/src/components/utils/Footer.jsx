@@ -32,7 +32,7 @@ export const Footer = () => {
                     <h5>About</h5>
                     <ul className="list-unstyled text-small">
                         <li className="mb-1"><a className="link-secondary text-decoration-none" href="/">Team</a></li>
-                        <li className="mb-1"><a className="link-secondary text-decoration-none" href="/">Locations</a></li>
+                        <li className="mb-1"><a className="link-secondary text-decoration-none" href="/">About</a></li>
                         <li className="mb-1"><a className="link-secondary text-decoration-none" href="/">Privacy</a></li>
                         <li className="mb-1"><a className="link-secondary text-decoration-none" href="/">Terms</a></li>
                     </ul>
