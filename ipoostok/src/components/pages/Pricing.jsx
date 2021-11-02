@@ -4,7 +4,7 @@ export const Pricing = () => {
     return (
         <div className="container py-3">
             <header>
-                <div className="pricing-header p-3 pb-md-4 mx-auto text-center">
+                <div className="pricing-header p-3 pb-md-4 mx-auto text-md-center">
                     <h1 className="display-4 fw-normal">Pricing</h1>
                     <p className="fs-5 text-muted">Quickly build an effective pricing table for your potential customers with this Bootstrap example. It’s built with default Bootstrap components and utilities with little customization.</p>
                     <p className="fw-bold">We are in Beta. So you can join us for free and use all our features</p>

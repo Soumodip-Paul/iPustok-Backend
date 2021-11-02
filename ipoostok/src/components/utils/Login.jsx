@@ -59,6 +59,8 @@ export const Login = () => {
                                 </div>
                                 <button className="w-100 mb-2 btn btn-lg rounded-4 btn-primary" type="submit">Log In</button>
                             </form>
+                            <small className="text-muted">Forgot your password? <span className="text-primary"
+                            style={{cursor: 'pointer'}} onClick={Login}>Reset now</span></small>
                         </div>
                     </div>
                 </div>

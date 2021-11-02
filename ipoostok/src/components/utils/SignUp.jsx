@@ -52,7 +52,7 @@ export const SignUp = () => {
 
     return (
         !authToken &&
-        <div className="modal rounded-5 shadow fade" id="modalSignin" tabIndex="-1" aria-labelledby="modalSigninTitle" aria-hidden="true">
+        <div className="modal rounded-5 shadow fade no-scroll" id="modalSignin" tabIndex="-1" aria-labelledby="modalSigninTitle" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header p-5 pb-4 border-bottom-0">

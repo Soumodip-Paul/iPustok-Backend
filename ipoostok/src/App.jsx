@@ -12,6 +12,7 @@ import { Footer } from './components/utils/Footer';
 import { authToken as token } from './components/assets/config'
 import { Admin } from './components/pages/Admin';
 import { GetPage } from './components/pages/GetPage';
+import { ScrollTop } from './components/utils/Scrolltop';
 
 function App() {
     const { authToken, setAuthToken } = useContext(AuthContext);
@@ -61,6 +62,7 @@ function App() {
             <SignUp />
             <Login />
             <Footer />
+            <ScrollTop />
         </>
     );
 }

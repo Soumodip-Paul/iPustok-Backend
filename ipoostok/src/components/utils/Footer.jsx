@@ -4,7 +4,7 @@ export const Footer = () => {
     return (
         <footer className="p-4 my-md-5 pt-md-5 border-top">
             <div className="row">
-                <div className="col-12 col-md ms-4">
+                <div className="col-12 col-md m-0">
                     <img className="mb-2" src="/logo192.png" alt="" width="64" height="64" />
                     <small className="d-block mb-3 text-muted">&copy; 2017–2021</small>
                 </div>

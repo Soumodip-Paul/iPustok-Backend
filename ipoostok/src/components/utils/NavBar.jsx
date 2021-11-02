@@ -5,24 +5,27 @@ import { SignInBtn } from './SignUp'
 
 export const NavBar = ({ children }) => {
     return (
-        <header>
-            <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+            <nav className="navbar navbar-dark navbar-expand-md bg-dark ">
                 <div className="container-fluid">
                     <NavBarBrand>iPoostok</NavBarBrand>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    <div className="collapse navbar-collapse" id="navbarCollapse">
-                        <ul className="navbar-nav me-auto mb-2 mb-md-0">
-                            {children}
-                        </ul>
-                        {/* right aligned buttons are here */}
-                        <SignInBtn/>
-                        <LoginButton/>
+                    <div className="offcanvas bg-dark text-light offcanvas-start" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                        <div className="offcanvas-header border-bottom">
+                            <h5 className="offcanvas-title" id="offcanvasNavbarLabel">iPoostok</h5>
+                            <button type="button" className="btn-close text-reset " style={{filter: 'invert(1)'}} data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        </div>
+                        <div className="offcanvas-body ">
+                            <ul className="navbar-nav justify-content-start align-items-md-center flex-grow-1 pe-3">
+                                {children}
+                            </ul>
+                            <SignInBtn/>
+                            <LoginButton/>
+                        </div>
                     </div>
                 </div>
             </nav>
-        </header>
 
     )
 }
@@ -32,8 +35,9 @@ export const NavBarBrand = ({ children }) => {
 }
 export const NavBarLink = ({ children, to }) => {
     return (
-        <li className="nav-item">
-            <NavLink exact className="nav-link" activeClassName="active" aria-current="page" to={to}>{children}</NavLink>
+        <li data-bs-dismiss="offcanvas"  className="nav-item">
+            <NavLink exact className="nav-link" activeClassName="active" aria-current="page" to={to}
+            >{children}</NavLink>
         </li>
     )
 }
