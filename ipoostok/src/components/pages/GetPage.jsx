@@ -27,6 +27,6 @@ export const GetPage = () => {
         if(url !== 'admin' && url !== 'profile') fetchdata(url)
     }, [url, setPage])
     return (
-        page && <div className="container" id="page"></div>
+        page && <div className="container my-3" id="page"></div>
     )
 }
