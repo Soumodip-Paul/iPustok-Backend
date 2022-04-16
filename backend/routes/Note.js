@@ -39,7 +39,7 @@ router.post('/addnote', verifyToken, [
     }
 })
 
-// ROUTE 3: update a note | PUT /api/notes/updatenote/:id | login required
+// ROUTE 3A: update a note | PUT /api/notes/updatenote/:id | login required
 
 router.put('/updatenote/:id', verifyToken, async (req, res) => {
     try {
@@ -59,6 +59,16 @@ router.put('/updatenote/:id', verifyToken, async (req, res) => {
         console.log(error);
         res.status(500).send("Internal server error")
     }
+})
+
+// ROUTE 3B: pin a note | PUT /api/notes/pinnote/:id | login required
+router.put('/pinnote/:id', verifyToken, async (req,res) => {
+    const note = await Note.findById(req.params.id);
+    note.pinned = !note.pinned
+    if (!note) { return res.status(404).send("Not Found!") }
+    if (note.uid.toString() !== req.id) { return res.status(401).send("Not Allowed! ") }
+    const updatedNote = await Note.findByIdAndUpdate(req.params.id, { $set: note }, { new: true });
+    res.send(updatedNote);
 })
 
 // ROUTE 4: delete a note | DELETE /api/notes/deletenote/:id | login required

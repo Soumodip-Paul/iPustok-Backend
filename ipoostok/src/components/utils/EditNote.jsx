@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useRef } from 'react'
 import { updateNote } from '../adapters/network'
 import { AuthContext } from '../context/Auth'
+import Pin from '../assets/svg/pin.svg'
 
 export const EditNote = ({ note, notes, setNotes }) => {
     const [tag, setTag] = useState(note.tag)
@@ -42,7 +43,7 @@ export const EditNote = ({ note, notes, setNotes }) => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" ref={closeRef}>Close</button>
-                        <button type="button" className="btn btn-primary" onClick={e => updateNote(id,title,tag,desc,authToken,notes, setNotes, onEnd)}>Update</button>
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal"  onClick={e => updateNote(id, title, tag, desc, authToken, notes, setNotes, onEnd)}>Update</button>
                     </div>
                 </div>
             </div>
@@ -53,7 +54,9 @@ export const EditNote = ({ note, notes, setNotes }) => {
 export const EditButton = ({ onClick }) => {
     return (
         <button type="button" className="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editModal" onClick={onClick}>
-            Edit
+            <svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 24 24" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000">
+                <use xlinkHref={`${Pin}#edit`} />
+            </svg>
         </button>
     )
 }

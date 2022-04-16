@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from 'react'
-import { NoteView } from '../adapters/NoteView'
 import { AuthContext } from '../context/Auth'
 import { noteKey } from '../assets/config'
-import { fetchNotes, deleteNote, addNote } from '../adapters/network'
+import { fetchNotes, deleteNote, addNote, pinNote } from '../adapters/network'
 import { EditNote } from '../utils/EditNote'
+import { PaginatedNote } from '../utils/PaginatedNote'
 
 export const Dashboard = () => {
 
@@ -17,6 +17,13 @@ export const Dashboard = () => {
     const { authToken } = useContext(AuthContext)
 
     const setAndSaveNotes = (data) => {
+        data.sort((a,b) => {
+            const date1 = new Date(a.date)
+            const date2 = new Date(b.date)
+            
+            return date2 - date1;
+        })
+        data.sort((a,b) => b.pinned - a.pinned)
         setNotes(data)
         if (data) sessionStorage.setItem(noteKey, JSON.stringify(data))
         else sessionStorage.removeItem(noteKey)
@@ -37,6 +44,11 @@ export const Dashboard = () => {
         <main>
             <section className="py-5 text-start container">
                 <div className="row py-lg-5">
+                    <div className="col-lg-6 col-md-8 mx-auto">
+                        <h1 className="fw-light">Album example</h1>
+                        <p className="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
+
+                    </div>
                     <form className='text-start col-lg-6 col-md-8 mx-auto' onSubmit={onSubmit}>
                         <h1 className="fw-light mb-3">Add Your Notes</h1>
                         <div className="form-floating mb-3">
@@ -53,24 +65,12 @@ export const Dashboard = () => {
                         </div>
                         <button disabled={title.length === 0 || desc.length === 0} type="submit" className="btn btn-primary px-4 rounded-pill mb-3">Add Note</button>
                     </form>
-                    <div className="col-lg-6 col-md-8 mx-auto">
-                        <h1 className="fw-light">Album example</h1>
-                        <p className="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
-
-                    </div>
                 </div>
             </section>
             {!loading ? notes && notes.length > 0 ?
                 <>
                     <EditNote note={note} notes={notes} setNotes={setAndSaveNotes} />
-                    <div className="album pt-0 pb-5 bg-light">
-                        <h4 className="text-center fw-bold py-4 sticky-top" style={{ background: '#f8f9fa' }}>Your Notes</h4>
-                        <div className="container pt-2">
-                            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                                {notes.map(note => <NoteView key={note._id} note={note} deleteNote={e => deleteNote(note._id, authToken, notes, setAndSaveNotes)} editNote={e => setUpNote(note)} />)}
-                            </div>
-                        </div>
-                    </div>
+                    <PaginatedNote notes={notes} setAndSaveNotes={setAndSaveNotes} authToken={authToken} setUpNote={setUpNote} deleteNote={deleteNote} PinNote={pinNote} />
                 </>
                 :
                 <h3 className="text-center fst-italic p-3">{errors}</h3>

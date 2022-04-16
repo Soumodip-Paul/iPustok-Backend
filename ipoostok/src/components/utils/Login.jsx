@@ -28,7 +28,8 @@ export const Login = () => {
                 setAuthToken(data.authToken)
             }
             else {
-                alert(data)
+                console.log(data, Array.isArray(data.error) ? data.error[0].msg : data.error)
+                alert('hi',Array.isArray(data.error) ? data.error[0].msg : data.error)
                 setAuthToken(null)
             }
         } catch (error) {

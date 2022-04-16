@@ -21,6 +21,10 @@ const Notes = new Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    pinned: {
+        type: Boolean,
+        default: false
     }
 })
 

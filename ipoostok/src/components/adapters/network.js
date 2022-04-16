@@ -55,7 +55,7 @@ export  const addNote = async (title, content, tag, authToken, notes, setDesc, s
     setTitle('')
 }
 
-export  const updateNote = async (id , title, content, tag, authToken, notes, setNote, onEnd) => {
+export  const updateNote = async (id , title, content, tag, authToken, notes, setAndSaveNotes, onEnd) => {
     const response = await fetch(`${process.env.REACT_APP_API_KEY || 'http://localhost:8000'}/api/notes/updatenote/${id}`,{
         method: 'PUT',
         headers: {
@@ -74,7 +74,7 @@ export  const updateNote = async (id , title, content, tag, authToken, notes, se
                 break;
             }
         }
-        setNote(noteArr)
+        setAndSaveNotes(noteArr)
         alert("Note updated successfully") 
         break;
         case 401: alert("You are not allowed to edit this note"); break;
@@ -82,4 +82,31 @@ export  const updateNote = async (id , title, content, tag, authToken, notes, se
         default: alert("Some error occured");
     }
     onEnd()
+}
+
+export  const pinNote = async (id , authToken, notes, setAndSaveNotes) => {
+    const response = await fetch(`${process.env.REACT_APP_API_KEY || 'http://localhost:8000'}/api/notes/pinnote/${id}`,{
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'auth-token' : authToken
+        },
+    })
+    switch (response.status) {
+        case 200: 
+        const noteArr = JSON.parse(JSON.stringify(notes))
+        for(let i = 0; i < noteArr.length; i++){
+            if (noteArr[i]._id === id ){
+                const newNote = await response.json()
+                noteArr[i] = newNote
+                break;
+            }
+        }
+        setAndSaveNotes(noteArr)
+        alert("Note pinned successfully") 
+        break;
+        case 401: alert("You are not allowed to edit this note"); break;
+        case 400: alert("Note not found"); break;
+        default: alert("Some error occured");
+    }
 }

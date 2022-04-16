@@ -1,175 +1,276 @@
-import { useRef, useState, useContext } from 'react'
-import { Editor } from '@tinymce/tinymce-react'
-import { AuthContext } from '../context/Auth'
-import '../../stylesheet/mce.css'
+import { useEffect } from 'react'
+import '../../stylesheet/admin.css'
 
-const init = (useDarkMode) => {
-    return {
-        selector: 'textarea#open-source-plugins',
-        plugins: 'print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons',
-        imagetools_cors_hosts: ['picsum.photos'],
-        menubar: 'file edit view insert format tools table help',
-        toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak code | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
-        toolbar_sticky: true,
-        autosave_ask_before_unload: true,
-        autosave_interval: '30s',
-        autosave_prefix: '{path}{query}-{id}-',
-        autosave_restore_when_empty: false,
-        autosave_retention: '2m',
-        image_advtab: true,
-        link_list: [
-            { title: 'My page 1', value: 'https://www.tiny.cloud' },
-            { title: 'My page 2', value: 'http://www.moxiecode.com' }
-        ],
-        image_list: [
-            { title: 'My page 1', value: 'https://www.tiny.cloud' },
-            { title: 'My page 2', value: 'http://www.moxiecode.com' }
-        ],
-        image_class_list: [
-            { title: 'None', value: '' },
-            { title: 'Some class', value: 'class-name' }
-        ],
-        importcss_append: true,
-        file_picker_callback: function (callback, value, meta) {
-            /* Provide file and text for the link dialog */
-            if (meta.filetype === 'file') {
-                callback('https://www.google.com/logos/google.jpg', { text: 'My text' });
-            }
-
-            /* Provide image and alt text for the image dialog */
-            if (meta.filetype === 'image') {
-                callback('https://www.google.com/logos/google.jpg', { alt: 'My alt text' });
-            }
-
-            /* Provide alternative source and posted for the media dialog */
-            if (meta.filetype === 'media') {
-                callback('movie.mp4', { source2: 'alt.ogg', poster: 'https://www.google.com/logos/google.jpg' });
-            }
-        },
-        templates: [
-            { title: 'New Table', description: 'creates a new table', content: '<div className="mceTmpl"><table width="98%%"  border="0" cellspacing="0" cellpadding="0"><tr><th scope="col"> </th><th scope="col"> </th></tr><tr><td> </td><td> </td></tr></table></div>' },
-            { title: 'Starting my story', description: 'A cure for writers block', content: 'Once upon a time...' },
-            { title: 'New list with dates', description: 'New List with dates', content: '<div className="mceTmpl"><span className="cdate">cdate</span><br /><span className="mdate">mdate</span><h2>My List</h2><ul><li></li><li></li></ul></div>' }
-        ],
-        template_cdate_format: '[Date Created (CDATE): %m/%d/%Y : %H:%M:%S]',
-        template_mdate_format: '[Date Modified (MDATE): %m/%d/%Y : %H:%M:%S]',
-        height: '80vh',
-        image_caption: true,
-        quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
-        noneditable_noneditable_class: 'mceNonEditable',
-        toolbar_mode: 'sliding',
-        contextmenu: 'link image imagetools table',
-        skin: useDarkMode ? 'oxide-dark' : 'oxide',
-        content_css: useDarkMode ? 'dark' : 'default',
-        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-    }
-}
 export const Admin = () => {
-    const [page, setPage] = useState('')
-    const [pageData, setPageData] = useState(null)
-    const { authToken } = useContext(AuthContext)
-    const editorRef = useRef(null);
-    const create = async e => {
-        if (editorRef.current) {
-            const content = editorRef.current.getContent()
-            console.log(content);
-            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/addpage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'auth-token': authToken
-                },
-                body: JSON.stringify({
-                    url: page,
-                    content: content
-                })
-            })
-            if (response.status !== 200) alert("Some error occured")
-            else alert("Page saved")
-            setPage('')
-            setPageData(null)
-        }
-    };
-    const update = async e => {
-        if (editorRef.current) {
-            const content = editorRef.current.getContent()
-            console.log(content);
-            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/updatepage`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'auth-token': authToken
-                },
-                body: JSON.stringify({
-                    url: page,
-                    content: content
-                })
-            })
-            if (response.status !== 200) alert("Some error occured")
-            else alert("Page saved")
-            setPage('')
-            setPageData(null)
-        }
-    };
+    
+    useEffect(() => {
+        const script = document.createElement('script');
+        
+        script.src = "/js/chart.min.js";
+        script.async = true;        
+        document.body.appendChild(script);
+        
+        const dataChart = document.createElement('script')
+        dataChart.src = "/js/chart.js"
+        dataChart.async = true
+        
+        const feather = document.createElement('script')
+        feather.src = "https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        feather.async = true
 
-    const newPage = e => {
-        setPage('')
-        setPageData(null)
-    }
-
-    const changePage = async e => {
-        setPage(page.split(/\s+/).filter(e => e.length !== 0).join('-'))
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/${page}`)
-
-            if (response.status !== 200) return setPageData("new")
-            const data = await response.json()
-            setPageData(data)
-        } catch (error) {
-            console.log(error)
-            setPage('')
-            setPageData(null)
+        script.onload = () =>{
+            document.body.appendChild(feather)
+            feather.onload = () => 
+            document.body.appendChild(dataChart);
         }
-    }
-    const deletePage = async e => {
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/deletepage/${pageData.url}`, {
-                headers: { "auth-token": authToken },
-                method: 'DELETE'
-            })
 
-            if (response.status !== 200) return alert('Page Not Deleted')
-            else alert("Page Deleted")
-            setPage('')
-            setPageData(null)
-        } catch (error) {
-            console.log(error)
-            setPage('')
-            setPageData(null)
+        return () => {
+            document.body.removeChild(dataChart);
+            document.body.removeChild(script);
         }
-    }
+    });
+
     return (
-        <div className="container" style={{ minHeight: '80vh' }} >
-            {/* <label for="basic-url" className="form-label">Your vanity URL</label> */}
-            <div className="input-group mb-3 px-4 py-2">
-                <span className="input-group-text" id="basic-addon3">{window.location.origin + '/'}</span>
-                <input type="text" value={page} onChange={e => setPage(e.target.value)} className="form-control" id="basic-url" aria-describedby="basic-addon3" />
-                {page && page.length !== 0 && pageData && (pageData === "new" ?
-                    <button className="btn btn-outline-secondary" type="button" onClick={page && create}>Create Page</button>
-                    :
-                    <button className="btn btn-outline-secondary" type="button" onClick={page && update}>Update</button>)
-                }
-                {
-                    pageData && pageData !== 'new' &&
-                    <button className="btn btn-outline-secondary" type="button" onClick={deletePage}>Delete</button>
-                }
-                <button className="btn btn-outline-secondary" type="button" onClick={!pageData ? changePage : newPage} id="button-addon2">{pageData ? "Cancle" : "Get details"}</button>
+        <>
+            <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+                <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/">Company name</a>
+                <button className="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" />
+                <div className="navbar-nav">
+                    <div className="nav-item text-nowrap">
+                        <a className="nav-link px-3" href="/">Sign out</a>
+                    </div>
+                </div>
+            </header>
+
+            <div className="container-fluid">
+                <div className="row">
+                    <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                        <div className="position-sticky pt-3">
+                            <ul className="nav flex-column">
+                                <li className="nav-item">
+                                    <a className="nav-link active" aria-current="page" href="/">
+                                        <span data-feather="home"></span>
+                                        Dashboard
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="file"></span>
+                                        Orders
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="shopping-cart"></span>
+                                        Products
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="users"></span>
+                                        Customers
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="bar-chart-2"></span>
+                                        Reports
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="layers"></span>
+                                        Integrations
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                                <span>Saved reports</span>
+                                <a className="link-secondary" href="/" aria-label="Add a new report">
+                                    <span data-feather="plus-circle"></span>
+                                </a>
+                            </h6>
+                            <ul className="nav flex-column mb-2">
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="file-text"></span>
+                                        Current month
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="file-text"></span>
+                                        Last quarter
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="file-text"></span>
+                                        Social engagement
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">
+                                        <span data-feather="file-text"></span>
+                                        Year-end sale
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+
+                    <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 className="h2">Dashboard</h1>
+                            <div className="btn-toolbar mb-2 mb-md-0">
+                                <div className="btn-group me-2">
+                                    <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>
+                                    <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>
+                                </div>
+                                <button type="button" className="btn btn-sm btn-outline-secondary dropdown-toggle">
+                                    <span data-feather="calendar"></span>
+                                    This week
+                                </button>
+                            </div>
+                        </div>
+
+                        <canvas className="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+
+                        <h2>Section title</h2>
+                        <div className="table-responsive">
+                            <table className="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Header</th>
+                                        <th scope="col">Header</th>
+                                        <th scope="col">Header</th>
+                                        <th scope="col">Header</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1,001</td>
+                                        <td>random</td>
+                                        <td>data</td>
+                                        <td>placeholder</td>
+                                        <td>text</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,002</td>
+                                        <td>placeholder</td>
+                                        <td>irrelevant</td>
+                                        <td>visual</td>
+                                        <td>layout</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,003</td>
+                                        <td>data</td>
+                                        <td>rich</td>
+                                        <td>dashboard</td>
+                                        <td>tabular</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,003</td>
+                                        <td>information</td>
+                                        <td>placeholder</td>
+                                        <td>illustrative</td>
+                                        <td>data</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,004</td>
+                                        <td>text</td>
+                                        <td>random</td>
+                                        <td>layout</td>
+                                        <td>dashboard</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,005</td>
+                                        <td>dashboard</td>
+                                        <td>irrelevant</td>
+                                        <td>text</td>
+                                        <td>placeholder</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,006</td>
+                                        <td>dashboard</td>
+                                        <td>illustrative</td>
+                                        <td>rich</td>
+                                        <td>data</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,007</td>
+                                        <td>placeholder</td>
+                                        <td>tabular</td>
+                                        <td>information</td>
+                                        <td>irrelevant</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,008</td>
+                                        <td>random</td>
+                                        <td>data</td>
+                                        <td>placeholder</td>
+                                        <td>text</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,009</td>
+                                        <td>placeholder</td>
+                                        <td>irrelevant</td>
+                                        <td>visual</td>
+                                        <td>layout</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,010</td>
+                                        <td>data</td>
+                                        <td>rich</td>
+                                        <td>dashboard</td>
+                                        <td>tabular</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,011</td>
+                                        <td>information</td>
+                                        <td>placeholder</td>
+                                        <td>illustrative</td>
+                                        <td>data</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,012</td>
+                                        <td>text</td>
+                                        <td>placeholder</td>
+                                        <td>layout</td>
+                                        <td>dashboard</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,013</td>
+                                        <td>dashboard</td>
+                                        <td>irrelevant</td>
+                                        <td>text</td>
+                                        <td>visual</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,014</td>
+                                        <td>dashboard</td>
+                                        <td>illustrative</td>
+                                        <td>rich</td>
+                                        <td>data</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1,015</td>
+                                        <td>random</td>
+                                        <td>tabular</td>
+                                        <td>information</td>
+                                        <td>text</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </main>
+                </div>
             </div>
-            <Editor
-                onInit={(evt, editor) => editorRef.current = editor}
-                initialValue={(pageData && pageData.content) || 'New Page'}
-                init={init(window.matchMedia('(prefers-color-scheme: dark)').matches)}
-            />
-        </ div>
+        </>
     )
 }

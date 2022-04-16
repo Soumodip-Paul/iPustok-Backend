@@ -7,7 +7,7 @@ import { Auth } from './components/context/Auth';
 ReactDOM.render(
   <React.StrictMode>
     <Auth>
-      <App />
+        <App />
     </Auth>
   </React.StrictMode>,
   document.getElementById('root')
