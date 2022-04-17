@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef, createContext } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { AuthContext } from './components/context/Auth';
 import { Home } from './components/pages/Home';
@@ -13,10 +13,20 @@ import { authToken as token } from './components/assets/config'
 import { Admin as Admin2 } from './components/pages/Admin';
 import { GetPage } from './components/pages/GetPage';
 import { ScrollTop } from './components/utils/Scrolltop';
+import { PopUp } from './components/utils/PopUp';
+
+export const PopupContext = createContext({showAlert : alert})
 
 function App() {
     const { authToken, setAuthToken } = useContext(AuthContext);
+    const [alertText, setAlertText] = useState("")
     const [isAdmin, setIsAdmin] = useState(null)
+    const ref = useRef(null)
+    const showAlert = (text) => {
+        setAlertText(text)
+        ref.current.click()
+    }
+
     useEffect(() => {
         window.addEventListener('storage', e => {
             setAuthToken(localStorage.getItem(token))
@@ -29,7 +39,7 @@ function App() {
                         'auth-token': authToken
                     }
                 })
-                if (response.status === 200){
+                if (response.status === 200) {
                     const data = await response.json()
                     setIsAdmin(data)
                 }
@@ -38,7 +48,7 @@ function App() {
                     console.error("Some error occured")
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
                 setIsAdmin(null)
             }
         }
@@ -48,10 +58,10 @@ function App() {
 
     }, [setAuthToken, authToken])
     return (
-        <>
+        <PopupContext.Provider value={{showAlert :showAlert}}>
             <Router>
                 <Switch>
-                    {isAdmin && <Route exact path='/admin'><Admin2/></Route>}
+                    {isAdmin && <Route exact path='/admin'><Admin2 /></Route>}
                     <Route path="/">
                         <NavBar>
                             <NavBarLink to='/'>Home</NavBarLink>
@@ -67,15 +77,18 @@ function App() {
                             {authToken && <Route exact path='/profile'><Profile /></Route>}
                             <Route exact path="/:url"><GetPage /></Route>
                         </Switch>
-                    <SignUp />
-                    <Login />
-                    <Footer />
+                        <SignUp />
+                        <Login />
+                        <Footer />
+                        <PopUp text={alertText} />
+                        <button ref={ref} type="button" id='tooglePop' className="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#PopUp">
+                            Launch demo modal
+                        </button>
                     </Route>
                 </Switch>
                 <ScrollTop />
             </Router>
-            
-        </>
+        </PopupContext.Provider>
     );
 }
 

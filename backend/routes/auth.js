@@ -44,7 +44,7 @@ router.post("/signup", [
         res.status(200).json({ authToken })
 
     } catch (error) {
-        res.status(500).send("Internal Server Error"); console.log(error);
+        res.status(500).send("Internal Server Error"); console.error(error);
     }
 })
 
@@ -83,7 +83,7 @@ router.post("/login", [
         res.status(200).json({ authToken })
 
     } catch (error) {
-        res.status(500).send("Internal Server Error"); console.log(error);
+        res.status(500).send("Internal Server Error"); console.error(error);
     }
 })
 
@@ -95,7 +95,7 @@ router.post('/user', verifyToken, async (req, res) => {
         res.send(user);
     } catch (error) {
         res.status(500).send("Internal server error")
-        console.log(error)
+        console.error(error)
     }
 })
 
@@ -107,7 +107,7 @@ router.post('/admin', verifyToken, async (req, res) => {
         res.send(user.isAdmin);
     } catch (error) {
         res.status(500).send("Internal server error")
-        console.log(error)
+        console.error(error)
     }
 })
 

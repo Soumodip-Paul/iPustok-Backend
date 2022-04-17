@@ -16,7 +16,8 @@ export const fetchNotes = async (authToken, setErrors, setAndSaveNotes) => {
     }
 }
 
-export const deleteNote = async (id, authToken, notes, setAndSaveNotes) => {
+export const deleteNote = async (id, authToken, notes, setAndSaveNotes, showAlert) => {
+    if (showAlert === undefined) showAlert = alert
     const response = await fetch(`${process.env.REACT_APP_API_KEY || 'http://localhost:8000'}/api/notes/deletenote/${id}`, {
         method: 'DELETE',
         headers: {
@@ -27,9 +28,10 @@ export const deleteNote = async (id, authToken, notes, setAndSaveNotes) => {
     if (data.success) {
         const newNotes = notes.filter(e => e._id !== id)
         setAndSaveNotes(newNotes)
+        showAlert(" Note Successfully Deleted")
     }
     else {
-        alert(data)
+        showAlert(data)
     }
 }
 export  const addNote = async (title, content, tag, authToken, notes, setDesc, setTitle, setTag, setAndSaveNotes) => {
@@ -55,7 +57,8 @@ export  const addNote = async (title, content, tag, authToken, notes, setDesc, s
     setTitle('')
 }
 
-export  const updateNote = async (id , title, content, tag, authToken, notes, setAndSaveNotes, onEnd) => {
+export  const updateNote = async (id , title, content, tag, authToken, notes, setAndSaveNotes, onEnd, showAlert) => {
+    if (showAlert === undefined) showAlert = alert
     const response = await fetch(`${process.env.REACT_APP_API_KEY || 'http://localhost:8000'}/api/notes/updatenote/${id}`,{
         method: 'PUT',
         headers: {
@@ -75,16 +78,17 @@ export  const updateNote = async (id , title, content, tag, authToken, notes, se
             }
         }
         setAndSaveNotes(noteArr)
-        alert("Note updated successfully") 
+        showAlert("Note updated successfully") 
         break;
-        case 401: alert("You are not allowed to edit this note"); break;
-        case 400: alert("Note not found"); break;
-        default: alert("Some error occured");
+        case 401: showAlert("You are not allowed to edit this note"); break;
+        case 400: showAlert("Note not found"); break;
+        default: showAlert("Some error occured");
     }
     onEnd()
 }
 
-export  const pinNote = async (id , authToken, notes, setAndSaveNotes) => {
+export  const pinNote = async (id , authToken, notes, setAndSaveNotes, showAlert) => {
+    if (showAlert === undefined) showAlert = alert
     const response = await fetch(`${process.env.REACT_APP_API_KEY || 'http://localhost:8000'}/api/notes/pinnote/${id}`,{
         method: 'PUT',
         headers: {
@@ -95,18 +99,18 @@ export  const pinNote = async (id , authToken, notes, setAndSaveNotes) => {
     switch (response.status) {
         case 200: 
         const noteArr = JSON.parse(JSON.stringify(notes))
+        const newNote = await response.json()
         for(let i = 0; i < noteArr.length; i++){
             if (noteArr[i]._id === id ){
-                const newNote = await response.json()
                 noteArr[i] = newNote
                 break;
             }
         }
         setAndSaveNotes(noteArr)
-        alert("Note pinned successfully") 
+        showAlert(`Note ${newNote.pinned ? '' : 'un-'}pinned successfully`) 
         break;
-        case 401: alert("You are not allowed to edit this note"); break;
-        case 400: alert("Note not found"); break;
-        default: alert("Some error occured");
+        case 401: showAlert("You are not allowed to edit this note"); break;
+        case 400: showAlert("Note not found"); break;
+        default: showAlert("Some error occured");
     }
 }

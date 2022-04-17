@@ -1,16 +1,17 @@
 import { useContext, useState } from 'react'
 import { AuthContext } from '../context/Auth'
+import { PopupContext } from '../../App'
 import '../../stylesheet/modal.css'
 import Icons from '../assets/svg/Facebook.svg'
 
 
 export const SignUp = () => {
+    const { showAlert } = useContext(PopupContext)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const { authToken, setAuthToken } = useContext(AuthContext)
-    // console.log(authToken)
     const onSubmit = e => {
         e.preventDefault()
         fetchData(name,email, password)
@@ -40,11 +41,11 @@ export const SignUp = () => {
                 setAuthToken(data.authToken)
             }
             else {
-                alert(data.error || data)
+                showAlert(data.error || data)
                 setAuthToken(null)
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
             setAuthToken(null)
         }
 

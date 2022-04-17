@@ -34,7 +34,7 @@ router.post('/addnote', verifyToken, [
         const savedNote = await note.save();
         res.send(savedNote);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).send("Internal server error")
     }
 })
@@ -56,7 +56,7 @@ router.put('/updatenote/:id', verifyToken, async (req, res) => {
         res.send(updatedNote);
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).send("Internal server error")
     }
 })
@@ -84,7 +84,7 @@ router.delete('/deletenote/:id', verifyToken, async (req, res) => {
         res.send({ success: "Note successfully deleted", note })
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).send("Internal Server Error")
     }
 

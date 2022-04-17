@@ -13,7 +13,7 @@ const verifyToken = (req, res, next) => {
         req.id = data.id;
         next();
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.send({ error: "Please authenticate using a valid token" })
     }
 

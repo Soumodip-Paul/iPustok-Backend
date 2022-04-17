@@ -14,7 +14,7 @@ router.get('/:url', async (req, res) => {
         else return res.status(404).send("Page Not Found")
     }
     catch (e) {
-        console.log(e)
+        console.error(e)
         res.status(500).send("Internal server error");
     }
 })
@@ -36,7 +36,7 @@ router.post('/addpage', verifyToken,
             const savedPage = await page.save();
             res.status(200).json(savedPage);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).send("Internal server error")
         }
     })
@@ -57,7 +57,7 @@ router.put('/updatepage', verifyToken, async (req, res) => {
         res.status(200).json(updatedPage)
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).send("Internal server error")
     }
 })
@@ -75,7 +75,7 @@ router.delete('/deletepage/:url', verifyToken, async (req, res) => {
         res.send({ success: "Note successfully deleted", pages })
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).send("Internal Server Error")
     }
 

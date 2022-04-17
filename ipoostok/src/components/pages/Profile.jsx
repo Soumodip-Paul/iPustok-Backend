@@ -1,8 +1,10 @@
 import { useContext, useEffect } from 'react'
 import { useHistory } from 'react-router'
+import { PopupContext } from '../../App'
 import { AuthContext } from '../context/Auth'
 
 export const Profile = () => {
+    const { showAlert } = useContext(PopupContext)
     const { authToken, setAuthToken, data, setData } = useContext(AuthContext)
     const history = useHistory()
 
@@ -20,14 +22,14 @@ export const Profile = () => {
                 setData(data)
             }
             else {
-                alert("Something went wrong")
+                showAlert("Something went wrong")
                 setAuthToken(null)
                 setData(null)
             }
             return
         }
         if (!data && authToken) fetchUserData(authToken)
-    }, [authToken, setAuthToken, data, setData, history])
+    }, [authToken, setAuthToken, data, setData, history, showAlert])
 
     return (
          authToken ? data ?

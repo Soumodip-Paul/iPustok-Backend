@@ -2,6 +2,7 @@ import { useRef, useState, useContext } from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 import { AuthContext } from '../context/Auth'
 import '../../stylesheet/mce.css'
+import { PopupContext } from '../../App'
 
 const init = (useDarkMode) => {
     return {
@@ -65,6 +66,7 @@ const init = (useDarkMode) => {
     }
 }
 export const Admin2 = () => {
+    const { showAlert } = useContext(PopupContext)
     const [page, setPage] = useState('')
     const [pageData, setPageData] = useState(null)
     const { authToken } = useContext(AuthContext)
@@ -72,7 +74,6 @@ export const Admin2 = () => {
     const create = async e => {
         if (editorRef.current) {
             const content = editorRef.current.getContent()
-            console.log(content);
             const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/addpage`, {
                 method: 'POST',
                 headers: {
@@ -84,8 +85,8 @@ export const Admin2 = () => {
                     content: content
                 })
             })
-            if (response.status !== 200) alert("Some error occured")
-            else alert("Page saved")
+            if (response.status !== 200) showAlert("Some error occured")
+            else showAlert("Page saved")
             setPage('')
             setPageData(null)
         }
@@ -93,7 +94,6 @@ export const Admin2 = () => {
     const update = async e => {
         if (editorRef.current) {
             const content = editorRef.current.getContent()
-            console.log(content);
             const response = await fetch(`${process.env.REACT_APP_API_KEY || "http://localhost:8000"}/api/page/updatepage`, {
                 method: 'PUT',
                 headers: {
@@ -105,8 +105,8 @@ export const Admin2 = () => {
                     content: content
                 })
             })
-            if (response.status !== 200) alert("Some error occured")
-            else alert("Page saved")
+            if (response.status !== 200) showAlert("Some error occured")
+            else showAlert("Page saved")
             setPage('')
             setPageData(null)
         }
@@ -126,7 +126,7 @@ export const Admin2 = () => {
             const data = await response.json()
             setPageData(data)
         } catch (error) {
-            console.log(error)
+            console.error(error)
             setPage('')
             setPageData(null)
         }
@@ -138,12 +138,12 @@ export const Admin2 = () => {
                 method: 'DELETE'
             })
 
-            if (response.status !== 200) return alert('Page Not Deleted')
-            else alert("Page Deleted")
+            if (response.status !== 200) return showAlert('Page Not Deleted')
+            else showAlert("Page Deleted")
             setPage('')
             setPageData(null)
         } catch (error) {
-            console.log(error)
+            console.error(error)
             setPage('')
             setPageData(null)
         }

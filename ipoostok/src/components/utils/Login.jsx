@@ -1,9 +1,11 @@
 import { useState, useContext } from 'react'
+import { PopupContext } from '../../App'
 import { AuthContext } from '../context/Auth'
 
 export const Login = () => {
 
     const { authToken, setAuthToken } = useContext(AuthContext)
+    const { showAlert } = useContext(PopupContext)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const onSubmit = e => {
@@ -26,14 +28,15 @@ export const Login = () => {
             const data = await response.json()
             if (response.status === 200) {
                 setAuthToken(data.authToken)
+                showAlert("Successfully Logged In")
             }
             else {
-                console.log(data, Array.isArray(data.error) ? data.error[0].msg : data.error)
-                alert('hi',Array.isArray(data.error) ? data.error[0].msg : data.error)
+                showAlert(Array.isArray(data.error) ? data.error[0].msg : data.error)
                 setAuthToken(null)
             }
         } catch (error) {
-            console.log(error)
+            showAlert("Internal Error")
+            console.error(error)
             setAuthToken(null)
         }
 

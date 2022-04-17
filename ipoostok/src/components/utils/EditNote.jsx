@@ -2,8 +2,10 @@ import { useState, useEffect, useContext, useRef } from 'react'
 import { updateNote } from '../adapters/network'
 import { AuthContext } from '../context/Auth'
 import Pin from '../assets/svg/pin.svg'
+import { PopupContext } from '../../App'
 
 export const EditNote = ({ note, notes, setNotes }) => {
+    const { showAlert } = useContext(PopupContext)
     const [tag, setTag] = useState(note.tag)
     const [title, setTitle] = useState(note.title)
     const [desc, setDesc] = useState(note.content)
@@ -43,7 +45,7 @@ export const EditNote = ({ note, notes, setNotes }) => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" ref={closeRef}>Close</button>
-                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal"  onClick={e => updateNote(id, title, tag, desc, authToken, notes, setNotes, onEnd)}>Update</button>
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal"  onClick={e => updateNote(id, title, tag, desc, authToken, notes, setNotes, onEnd, showAlert)}>Update</button>
                     </div>
                 </div>
             </div>

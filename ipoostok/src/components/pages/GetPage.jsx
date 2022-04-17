@@ -18,7 +18,7 @@ export const GetPage = () => {
                 document.getElementById('page').innerHTML = data.content
             }
             catch (error) {
-                console.log(error)
+                console.error(error)
                 setPage(null)
                 // document.getElementById('page').innerHTML = "Some error occured"
                 return
