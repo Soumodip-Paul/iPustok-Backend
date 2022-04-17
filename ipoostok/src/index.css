@@ -1,4 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ms+Madi&display=swap');
+
+.fs-ms-madi {
+    font-family: 'Ms Madi', cursive;
+    font-size: x-large;
+}
+
+.page-link.active {
+    font-weight: bolder;
+}
 
 .bd-placeholder-img {
     font-size: 1.125rem;

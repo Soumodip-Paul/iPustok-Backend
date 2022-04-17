@@ -31,7 +31,7 @@ export const NavBar = ({ children }) => {
 }
 
 export const NavBarBrand = ({ children }) => {
-    return <Link className="navbar-brand" to="/">{children}</Link>
+    return <Link className="navbar-brand fs-ms-madi" to="/">{children}</Link>
 }
 export const NavBarLink = ({ children, to }) => {
     return (
